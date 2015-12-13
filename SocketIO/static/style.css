@@ -1,0 +1,121 @@
+body
+{
+    font-family: sans-serif;
+}
+
+.hidden-div
+{
+    display:none;
+}
+
+#page
+{
+    background-color: #7E82E6;
+    width: 800px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+}
+
+/* login page CSS */
+#login
+{
+    font-size: 40px;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 200px;
+    width: 450px;
+}
+
+#error
+{
+    color:red;
+}
+
+/* chat page CSS */
+#nav, #clientStatus, #inbox
+{
+    margin-bottom:10px;
+}
+
+#nav
+{
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+#nav a
+{
+    font-weight: bold;
+    color: #FFFFFF;
+    text-decoration:none;
+    padding-left:600px;
+    cursor:pointer ;
+}
+
+#clientStatus
+{
+    height:60px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background:white;
+    padding:5px;
+}
+
+#clientCount
+{
+    font-weight:bold;
+}
+
+#client
+{
+    background-color: gray;
+    padding: 3px;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+#inbox
+{
+    height:520px;
+    height:450px;
+    padding:5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: white;
+}
+
+/* message item CSS */
+.chatItemR
+{
+    text-align:right;
+}
+
+.sender
+{
+    font-weight:bold;
+    font-size:18px;   
+}
+
+.msg
+{
+    word-wrap: break-word; 
+    word-break: normal;
+    display: inline-block;
+    padding: 10px;
+    text-align: left;
+    max-width:600px;
+    margin-bottom:5px;
+}
+
+.mSend
+{
+    background-color: #40EF40;
+}
+
+.mRecv
+{
+    background-color: #2AD7E8;
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <style>
+        #main {
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+        }
+        #state{
+            float:right;
+            width:400px;
+        }
+    </style>
+<head>
+<body>
+    <div id="main">
+        <div id="inbox"></div>
+        <div id="input">
+            <input type="text" id="message" style="width:500px">
+            <button id="sendMsg" type="button">send</button>
+        </div>
+    </div>
+    <div id="state"></div>
+    
+    <script type="text/javascript" src="http://common.cnblogs.com/script/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8">
+    var cursor = null;
+    
+    function longPolling() {
+        $.ajax({
+            url: "update",
+            data: {"cursor": cursor},
+            type: "POST",
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $("#state").append("[state: " + textStatus + ", error: " + errorThrown + " ]<br/>");
+            },
+            success: function (result, textStatus) {
+                msg_data = eval("(" + result + ")");
+                $("#inbox").append(msg_data.html);
+                cursor = msg_data.latest_cursor;
+                console.log(msg_data)
+                $("#message").val("");
+                $("#state").append("[state: " + textStatus + " ]<br/>");
+            },
+            complete: longPolling
+        });
+    }
+    
+    function sendNewMessage() {
+        $.ajax({
+            type: "POST",
+            url: "new",
+            data: {"msg": $("#message").val()},
+        });
+    }
+    
+    $(function(){
+        $("#sendMsg").click(function() {
+            sendNewMessage();        
+        });
+        
+        $('#message').bind('keypress', function(e) {
+            if(e.keyCode==13){
+                sendNewMessage();
+            }
+        });
+        
+        longPolling();
+    })
+    </script>
+</body>
+</html>

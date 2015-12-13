@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Socket.IO chat</title>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+    </head>
+    <body>
+        <div id="page">
+            <div id="login">
+                Please enter your name <br/>
+                <input type="text" id="clientNameText">
+                <button id="loginBtn">login</button>
+                <div id="error" class="hidden-div">Invalid client name!</div>
+            </div>
+            <div id="chat" class="hidden-div">
+                <div id="nav">
+                    Welcome, <span id="clientNameSpan"></span>
+                    <a id="logoutBtn"><em>logout</em></a>
+                </div>
+                <div id="clientStatus">
+                    <span id="clientCount"></span>
+                    <div id="clients"></div>
+                </div>
+                <div id="inbox"></div>
+                <div id="input">
+                    <input id="message" style="width:730px"/>
+                    <button id="sendMsgBtn" type="button">send</button>
+                </div>
+            </div>
+        </div>
+    <script src="/static/jquery-1.11.3.js"></script>
+    <!--[if IE 7]>
+    <script src="/static/json2.js"></script>
+    <![endif]-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    
+        var socket;
+        
+        $(function(){
+            $("#loginBtn").click(function(){
+                login();
+            });
+            $("#logoutBtn").click(function(){
+                logout();
+            });
+            
+            $("#sendMsgBtn").click(function() {
+                sendMessage()
+            });
+              
+            $("#message").bind("keypress", function(e) {
+                if(e.keyCode==13){
+                    sendMessage()                    
+                }
+            });
+        
+        })
+        
+        function sendMessage(){
+            socket.emit("new_message", "{'sender':'"+$("#clientNameSpan").text()+"', 'msg':'"+$("#message").val()+"'}");      
+            $("#message").val("");
+        }
+        
+        function login(){
+            var username = $.trim($("#clientNameText").val());
+            if(username == ""){
+                $("#error").removeClass("hidden-div");
+                return;
+            }
+            
+            $("#clientNameSpan").text($.trim($("#clientNameText").val()));
+            $("#login").addClass("hidden-div");
+            $("#chat").removeClass("hidden-div");
+            
+            initSocket();
+            
+        }
+        
+        function logout(){
+            // close client socket when logout
+            socket.disconnect();
+            
+            $("#login").removeClass("hidden-div");
+            $("#chat").addClass("hidden-div")
+            $("#error").addClass("hidden-div");
+            $("#clientNameText").val("");
+            $("#inbox").children().remove();
+        }
+        
+        function initSocket(){
+            socket = io("http://" + location.host);
+            
+            socket.emit("add_client", $("#clientNameSpan").text());
+            
+            socket.on("new_message", function(data){
+                console.log(data);
+                data = eval("(" + data + ")");
+                if (data.sender == $("#clientNameSpan").text()){
+                    $("#inbox").append("<div class='chatItemS'><span class='msg mSend'><span class='sender'>"+data.sender+": </span>"+data.msg+"</span></div>");
+                }
+                else {
+                    $("#inbox").append("<div class='chatItemR'><span class='msg mRecv'><span class='sender'>"+data.sender+": </span>"+data.msg+"</span></div>");
+                }
+                $("#inbox").scrollTop($("#inbox")[0].scrollHeight);
+            });
+            
+            socket.on("user_status", function(data){
+                $("#clientCount").text("Online User: "+data.length);
+                $("#clients").children().remove();
+                for(var i = 0; i<data.length; i++){
+                    $("#clients").append("<span id='client'>"+data[i]["clientName"]+"</span>")
+                }
+            })
+        }
+      
+    </script>
+  </body>
+</html>
